@@ -5,8 +5,8 @@
   <meta charset='utf-8' />
   <title>Wi-fi users</title>
   <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
-  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
   <style>
     body {
       margin: 0;
@@ -102,9 +102,9 @@
   <div id='map'></div>
   <div class='map-overlay top'>
     <div class='map-overlay-inner'>
-      <h2>Moscow 7 July 2017<br>Free Wi-Fi users</h2>
+      <h2>Free Wi-Fi users in Moscow<br>7th July 2017</h2>
       <label id='hour'></label>
-      <input id='slider' type='range' min='134' max='158' step='1' value='134'/>
+      <input id='slider' type='range' min='120' max='144' step='1' value='120'/>
     </div>
     <div class='legends' id='legend'></div>
     <button class='button' onclick='onClick()'>Load all data</button>
@@ -116,28 +116,15 @@
       container: 'map',
       style: 'mapbox://styles/tayachill/cjmuk0j1q033e2rp7pkg7fpes',
       center: [37.615045, 55.746655],
-      zoom: 12.5,
-      minZoom: 12.5
+      zoom: 12,
+      minZoom: 12
     });
 
     const onClick = () => {
-      map.setFilter('dots', ['==', 'hour', -1]);
-      map.setLayoutProperty('dots_all', 'visibility', 'visible');
+      map.setFilter('dots', ['>=', 'hour', 120]);
     };
 
     var hours = [
-      '12:00',
-      '13:00',
-      '14:00',
-      '15:00',
-      '16:00',
-      '17:00',
-      '18:00',
-      '19:00',
-      '20:00',
-      '21:00',
-      '22:00',
-      '23:00',
       '0:00',
       '1:00',
       '2:00',
@@ -151,6 +138,18 @@
       '10:00',
       '11:00',
       '12:00',
+      '13:00',
+      '14:00',
+      '15:00',
+      '16:00',
+      '17:00',
+      '18:00',
+      '19:00',
+      '20:00',
+      '21:00',
+      '22:00',
+      '23:00',
+      '24:00',
     ];
 
     document.getElementById('hour').textContent = hours[0];
@@ -161,7 +160,7 @@
       var filters = ['==', 'hour', hour];
       map.setFilter('dots', filters);
 
-    document.getElementById('hour').textContent = hours[hour - 134];
+    document.getElementById('hour').textContent = hours[hour - 120];
     }
 
     map.on('load', function() {
@@ -175,64 +174,17 @@
         "id": "dots",
         "type": "circle",
         "source": 'wificatchers',
-        "source-layer": "data-mkad-dykeme",
-        "filter": ['==', 'hour', 134],
+        "source-layer": "data_mkad-dykeme",
+        "filter": ['==', 'hour', 120],
         "paint": {
-          "circle-blur": 1.2,
+          "circle-blur": 1,
           "circle-opacity": 0.9,
           "circle-radius": {
             "base": 1,
             "stops": [
-              [9, 1],
               [10, 1.5],
-              [12, 4],
-              [15, 12],
-              [22, 30]
-            ]
-          },
-          'circle-color': {
-            "base": 1,
-            "type": "categorical",
-            "property": "cat_name",
-            "stops": [
-              ["App, other", "#FF9E7F"],
-              ["Dating / Social Networking / Messenging App", "#FF9E7F"],
-              ["Gaming device", "#FF9E7F"],
-              ["Device tracking/security software", "#FFFF00"],
-              ["Navigation application", "#FFFF00"],
-              ["other", "#0AFF70"],
-            ],
-            "default": "#0AFF70",
-          }
-        }
-      });
-
-      map.addLayer({
-        "id": "dots_all",
-        "type": "circle",
-        "source": 'wificatchers',
-        "source-layer": "data-mkad-dykeme",
-        "filter": ['>=', 'hour', 134],
-        "layout": {
-          "visibility": 'none'
-        },
-        "paint": {
-          "circle-opacity": 0.9,
-          "circle-blur": {
-            "base": 1,
-            "stops": [
-              [10, 2],
-              [12, 1.5],
-              [15, 1.2]
-            ]
-          },
-          "circle-radius": {
-            "base": 1,
-            "stops": [
-              [9, 0.8],
-              [10, 1],
-              [12, 2],
-              [15, 6],
+              [12, 3],
+              [15, 10],
               [22, 30]
             ]
           },
@@ -277,7 +229,6 @@
     document.getElementById('slider').addEventListener('input', function(e) {
       var hour = parseInt(e.target.value, 10);
       filterBy(hour);
-      map.setLayoutProperty('dots_all', 'visibility', 'none');
     });
   </script>
 
