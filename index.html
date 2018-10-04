@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset='utf-8' />
+  <title>Wi-fi users</title>
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.49.0/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+
+    .map-overlay {
+      font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+      position: absolute;
+      width: 25%;
+      top: 0;
+      left: 0;
+      padding: 10px;
+    }
+
+    .map-overlay .map-overlay-inner {
+      background-color: rgba(0, 0, 0, .6);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.20);
+      border-radius: 3px;
+      padding: 10px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .map-overlay h2 {
+      line-height: 24px;
+      display: block;
+      margin: 0 0 10px;
+      color: #fff;
+    }
+
+    .map-overlay input {
+      background-color: transparent;
+      display: inline-block;
+      width: 100%;
+      position: relative;
+      margin: 0;
+      cursor: ew-resize;
+    }
+
+    .button {
+      background-color: rgba(0, 0, 0, .6);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.20);
+      border-radius: 3px;
+      border: none;
+      outline: none;
+      padding: 10px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .legends {
+      background-color: rgba(0, 0, 0, .6);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.20);
+      border-radius: 3px;
+      border: none;
+      outline: none;
+      padding: 10px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    #legend {
+      background-color: rgba(0, 0, 0, .6);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.20);
+      border-radius: 3px;
+      border: none;
+      outline: none;
+      padding: 10px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .legend-key {
+      display: inline-block;
+      border-radius: 20%;
+      width: 10px;
+      height: 10px;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id='map'></div>
+  <div class='map-overlay top'>
+    <div class='map-overlay-inner'>
+      <h2>Moscow 7 July 2017<br>Free Wi-Fi users</h2>
+      <label id='hour'></label>
+      <input id='slider' type='range' min='134' max='158' step='1' value='134'/>
+    </div>
+    <div class='legends' id='legend'></div>
+    <button class='button' onclick='onClick()'>Load all data</button>
+  </div>
+
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoidGF5YWNoaWxsIiwiYSI6ImNpbGtxeHdnNzAwNzRvMGtxcWV4bXlmenQifQ.ymQiP_8v2syh79ZH9HU4Eg';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/tayachill/cjmuk0j1q033e2rp7pkg7fpes',
+      center: [37.615045, 55.746655],
+      zoom: 12.5,
+      minZoom: 12.5
+    });
+
+    const onClick = () => {
+      map.setFilter('dots', ['==', 'hour', -1]);
+      map.setLayoutProperty('dots_all', 'visibility', 'visible');
+    };
+
+    var hours = [
+      '12:00',
+      '13:00',
+      '14:00',
+      '15:00',
+      '16:00',
+      '17:00',
+      '18:00',
+      '19:00',
+      '20:00',
+      '21:00',
+      '22:00',
+      '23:00',
+      '0:00',
+      '1:00',
+      '2:00',
+      '3:00',
+      '4:00',
+      '5:00',
+      '6:00',
+      '7:00',
+      '8:00',
+      '9:00',
+      '10:00',
+      '11:00',
+      '12:00',
+    ];
+
+    document.getElementById('hour').textContent = hours[0];
+
+      function filterBy(hour) {
+      console.log(hour);
+
+      var filters = ['==', 'hour', hour];
+      map.setFilter('dots', filters);
+
+    document.getElementById('hour').textContent = hours[hour - 134];
+    }
+
+    map.on('load', function() {
+
+      map.addSource('wificatchers', {
+        type: 'vector',
+        url: 'mapbox://tayachill.adjlocmj'
+      });
+
+      map.addLayer({
+        "id": "dots",
+        "type": "circle",
+        "source": 'wificatchers',
+        "source-layer": "data-mkad-dykeme",
+        "filter": ['==', 'hour', 134],
+        "paint": {
+          "circle-blur": 1.2,
+          "circle-opacity": 0.9,
+          "circle-radius": {
+            "base": 1,
+            "stops": [
+              [9, 1],
+              [10, 1.5],
+              [12, 4],
+              [15, 12],
+              [22, 30]
+            ]
+          },
+          'circle-color': {
+            "base": 1,
+            "type": "categorical",
+            "property": "cat_name",
+            "stops": [
+              ["App, other", "#FF9E7F"],
+              ["Dating / Social Networking / Messenging App", "#FF9E7F"],
+              ["Gaming device", "#FF9E7F"],
+              ["Device tracking/security software", "#FFFF00"],
+              ["Navigation application", "#FFFF00"],
+              ["other", "#0AFF70"],
+            ],
+            "default": "#0AFF70",
+          }
+        }
+      });
+
+      map.addLayer({
+        "id": "dots_all",
+        "type": "circle",
+        "source": 'wificatchers',
+        "source-layer": "data-mkad-dykeme",
+        "filter": ['>=', 'hour', 134],
+        "layout": {
+          "visibility": 'none'
+        },
+        "paint": {
+          "circle-opacity": 0.9,
+          "circle-blur": {
+            "base": 1,
+            "stops": [
+              [10, 2],
+              [12, 1.5],
+              [15, 1.2]
+            ]
+          },
+          "circle-radius": {
+            "base": 1,
+            "stops": [
+              [9, 0.8],
+              [10, 1],
+              [12, 2],
+              [15, 6],
+              [22, 30]
+            ]
+          },
+          'circle-color': {
+            "base": 1,
+            "type": "categorical",
+            "property": "cat_name",
+            "stops": [
+              ["App, other", "#FF9E7F"],
+              ["Dating / Social Networking / Messenging App", "#FF9E7F"],
+              ["Gaming device", "#FF9E7F"],
+              ["Device tracking/security software", "#FFFF00"],
+              ["Navigation application", "#FFFF00"],
+              ["other", "#0AFF70"],
+            ],
+            "default": "#0AFF70",
+          }
+        }
+      });
+
+      var layers = ['Messenging, Social Networking, Gaming app',
+        'Device tracking and navigation app', 'Others applications'
+      ];
+      var colors = ['#FF9E7F', '#FFFF00', '#0AFF70'];
+
+      for (i = 0; i < layers.length; i++) {
+        var layer = layers[i];
+        var color = colors[i];
+        var item = document.createElement('div');
+        var key = document.createElement('span');
+        key.className = 'legend-key';
+        key.style.backgroundColor = color;
+
+        var value = document.createElement('span');
+        value.innerHTML = layer;
+        item.appendChild(key);
+        item.appendChild(value);
+        legend.appendChild(item);
+      }
+
+    });
+    document.getElementById('slider').addEventListener('input', function(e) {
+      var hour = parseInt(e.target.value, 10);
+      filterBy(hour);
+      map.setLayoutProperty('dots_all', 'visibility', 'none');
+    });
+  </script>
+
+</body>
+
+</html>
